@@ -14,11 +14,16 @@ using UnityEngine.Events;
 using Unity.Jobs;
 using Unity.Collections;
 using System.Runtime.InteropServices;
+#if BURST
+using static Unity.Mathematics.math;
+#endif
 #if KTX_UNITY
 using KtxUnity;
 #endif // KTX_UNITY
 
 namespace GLTFast {
+
+    using Unity.Mathematics;
 
     using Schema;
 
@@ -1380,8 +1385,13 @@ namespace GLTFast {
                     var jobUv = new Jobs.GetUVsFloatJob();
                     // jobUv.count = uvAccessor.count;
                     fixed( void* src = &(buffer[start]), dst = &(result[0]) ) {
+                        #if BURST
+                        jobUv.input = (float2*)src;
+                        jobUv.result = (float2*)dst;
+                        #else
                         jobUv.input = (float*)src;
                         jobUv.result = (Vector2*)dst;
+                        #endif
                     }
                     jobHandle = jobUv.Schedule(uvAccessor.count,DefaultBatchCount);
                 }
@@ -1417,7 +1427,12 @@ namespace GLTFast {
                         var jobUv = new Jobs.GetUVsUInt8Job();
                         fixed( void* src = &(buffer[start]), dst = &(result[0]) ) {
                             jobUv.input = (byte*) src;
-                            jobUv.result = (Vector2*)dst;
+                            jobUv.result = 
+                            #if BURST
+                                (float2*)dst;
+                            #else
+                                (Vector2*)dst;
+                            #endif
                         }
                         jobHandle = jobUv.Schedule(uvAccessor.count,DefaultBatchCount);
                     }
@@ -1595,8 +1610,13 @@ namespace GLTFast {
                 if(flip) {
                     var job32 = new Jobs.GetIndicesUInt32FlippedJob();
                     fixed( void* src = &(buffer[start]), dst = &(indices[0]) ) {
+                        #if BURST
+                        job32.input = (uint3*) src;
+                        job32.result = (int3*) dst;
+                        #else
                         job32.input = (System.UInt32*) src;
                         job32.result = (int*) dst;
+                        #endif
                     }
                     jobHandle = job32.Schedule(accessor.count/3,DefaultBatchCount);
                 } else {
@@ -1723,8 +1743,13 @@ namespace GLTFast {
                     var job = new Jobs.GetVector3sJob();
                     // job.count = accessor.count;
                     fixed( void* src = &(buffer[start]), dst = &(result[0]) ) {
+                        #if BURST
+                        job.input = (float3*)src;
+                        job.result = (float3*)dst;
+                        #else
                         job.input = (float*)src;
                         job.result = (float*)dst;
+                        #endif
                     }
                     jobHandle = job.Schedule(accessor.count,DefaultBatchCount);
                 } else

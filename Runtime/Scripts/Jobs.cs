@@ -6,15 +6,22 @@
 using UnityEngine;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Burst;
 using Unity.Jobs;
+using static Unity.Mathematics.math;
 
 namespace GLTFast.Jobs {
+
+    using Unity.Mathematics;
 
     static class Constants {
         public const float UINT16_MAX = 65535f;
         public const float INT16_MAX = 32767f;
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct CreateIndicesJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -30,6 +37,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct CreateIndicesFlippedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -43,6 +53,9 @@ namespace GLTFast.Jobs {
     }
 
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetIndicesUInt8Job : IJobParallelFor  {
 
         [ReadOnly]
@@ -59,6 +72,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetIndicesUInt8FlippedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -77,6 +93,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetIndicesUInt16FlippedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -95,6 +114,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetIndicesUInt16Job : IJobParallelFor  {
 
         [ReadOnly]
@@ -111,6 +133,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetIndicesUInt32Job : IJobParallelFor  {
 
         [ReadOnly]
@@ -127,8 +152,20 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetIndicesUInt32FlippedJob : IJobParallelFor  {
 
+#if BURST
+        [ReadOnly]
+        [NativeDisableUnsafePtrRestriction]
+        public uint3* input;
+
+        [ReadOnly]
+        [NativeDisableUnsafePtrRestriction]
+        public int3* result;
+#else
         [ReadOnly]
         [NativeDisableUnsafePtrRestriction]
         public System.UInt32* input;
@@ -136,15 +173,23 @@ namespace GLTFast.Jobs {
         [ReadOnly]
         [NativeDisableUnsafePtrRestriction]
         public int* result;
+#endif
 
         public void Execute(int i)
         {
+#if BURST
+            result[i] = (int3)input[i].xzy;
+#else
             result[i*3] = (int)input[i*3];
             result[i*3+2] = (int)input[i*3+1];
             result[i*3+1] = (int)input[i*3+2];
+#endif
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsUInt8Job : IJobParallelFor  {
 
         [ReadOnly]
@@ -153,7 +198,11 @@ namespace GLTFast.Jobs {
 
         [ReadOnly]
         [NativeDisableUnsafePtrRestriction]
+#if BURST
+        public float2* result;
+#else
         public Vector2* result;
+#endif
 
         public void Execute(int i)
         {
@@ -162,6 +211,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsUInt8NormalizedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -179,6 +231,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsUInt16NormalizedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -196,6 +251,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsUInt16Job : IJobParallelFor  {
 
         [ReadOnly]
@@ -213,22 +271,41 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsFloatJob : IJobParallelFor {
         [ReadOnly]
         [NativeDisableUnsafePtrRestriction]
+#if BURST
+        public float2* input;
+#else
         public float* input;
+#endif
 
         [ReadOnly]
         [NativeDisableUnsafePtrRestriction]
+#if BURST
+        public float2* result;
+#else
         public Vector2* result;
+#endif
 
         public void Execute(int i) {
+#if BURST
+            result[i].x = input[i].x;
+            result[i].y = -input[i].x;
+#else
             result[i].x = ((float*)input)[i*2];
             result[i].y = 1-((float*)input)[i*2+1];
+#endif
         }
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsUInt8InterleavedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -251,6 +328,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsUInt8InterleavedNormalizedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -273,6 +353,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsUInt16InterleavedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -295,6 +378,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsUInt16InterleavedNormalizedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -317,6 +403,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsInt16InterleavedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -339,6 +428,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsInt16InterleavedNormalizedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -361,6 +453,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsInt8InterleavedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -383,6 +478,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUVsInt8InterleavedNormalizedJob : IJobParallelFor  {
 
         [ReadOnly]
@@ -404,6 +502,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetColorsVec3FloatJob : IJobParallelFor {
 
         [ReadOnly]
@@ -422,6 +523,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetColorsVec3UInt8Job : IJobParallelFor {
 
         [ReadOnly]
@@ -440,6 +544,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetColorsVec3UInt16Job : IJobParallelFor {
 
         [ReadOnly]
@@ -458,6 +565,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetColorsVec4UInt16Job : IJobParallelFor {
 
         [ReadOnly]
@@ -477,6 +587,9 @@ namespace GLTFast.Jobs {
     }
 
 #if !COPY_LEGACY
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct MemCopyJob : IJob {
 
         [ReadOnly]
@@ -502,6 +615,9 @@ namespace GLTFast.Jobs {
 
 #else
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct MemCopyLegacyJob : IJobParallelFor {
 
         [ReadOnly]
@@ -518,23 +634,44 @@ namespace GLTFast.Jobs {
     }
 #endif
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector3sJob : IJobParallelFor {
         [ReadOnly]
         [NativeDisableUnsafePtrRestriction]
+        #if BURST
+        public float3* input;
+        #else
         public float* input;
+        #endif
 
         [ReadOnly]
         [NativeDisableUnsafePtrRestriction]
+        #if BURST
+        public float3* result;
+        #else
         public float* result;
+        #endif
 
         public void Execute(int i) {
+#if BURST
+            result[i].xy = input[i].xy;
+            result[i].z = -input[i].z;
+#else
             int ti = i*3;
             result[ti] = input[ti];
             result[ti+1] = input[ti+1];
             result[ti+2] = -input[ti+2];
+#endif
+            
         }
     }
 
+
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector4sJob : IJobParallelFor {
 
         [ReadOnly]
@@ -554,6 +691,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector2sInterleavedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -575,6 +715,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector3sInterleavedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -597,6 +740,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector4sInterleavedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -620,6 +766,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector4sInt16NormalizedInterleavedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -648,6 +797,9 @@ namespace GLTFast.Jobs {
     }
 
     /// Untested!
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector4sInt8NormalizedInterleavedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -675,6 +827,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUInt16PositionsJob : IJobParallelFor {
 
         [ReadOnly]
@@ -693,6 +848,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUInt16PositionsNormalizedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -714,6 +872,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUInt16PositionsInterleavedJob : IJobParallelFor
     {
         [ReadOnly]
@@ -736,6 +897,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetUInt16PositionsInterleavedNormalizedJob : IJobParallelFor
     {
         [ReadOnly]
@@ -761,6 +925,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector3FromInt16InterleavedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -783,6 +950,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector3FromInt16InterleavedNormalizedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -809,6 +979,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector3FromSByteInterleavedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -838,6 +1011,7 @@ namespace GLTFast.Jobs {
         }
     }
 
+[   BurstCompile]
     public unsafe struct GetVector3FromSByteInterleavedNormalizedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -870,6 +1044,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector3FromByteInterleavedJob : IJobParallelFor {
 
         [ReadOnly]
@@ -897,6 +1074,9 @@ namespace GLTFast.Jobs {
         }
     }
 
+#if BURST
+    [BurstCompile]
+#endif
     public unsafe struct GetVector3FromByteInterleavedNormalizedJob : IJobParallelFor {
 
         [ReadOnly]
