@@ -100,6 +100,7 @@ namespace GLTFast {
             "KHR_texture_transform",
             "KHR_mesh_quantization",
             "KHR_materials_transmission",
+            "KHR_materials_clearcoat",
         };
 
         enum ChunkFormat : uint
