@@ -42,10 +42,12 @@ namespace GLTFast.Materials {
         }
         
         public const string KW_UV_ROTATION = "_UV_ROTATION";
+        public const string KW_ALPHATEST_ON = "_ALPHATEST_ON";
         
         public static readonly int bumpMapPropId = Shader.PropertyToID("_BumpMap");
         public static readonly int bumpScalePropId = Shader.PropertyToID("_BumpScale");
         public static readonly int cutoffPropId = Shader.PropertyToID("_Cutoff");
+        public static readonly int dstBlendPropId = Shader.PropertyToID("_DstBlend");
         public static readonly int emissionColorPropId = Shader.PropertyToID("_EmissionColor");
         public static readonly int emissionMapPropId = Shader.PropertyToID("_EmissionMap");
         public static readonly int mainTexRotation = Shader.PropertyToID("_MainTexRotation");
@@ -55,6 +57,8 @@ namespace GLTFast.Materials {
         public static readonly int occlusionStrengthPropId = Shader.PropertyToID("_OcclusionStrength");
         public static readonly int specColorPropId = Shader.PropertyToID("_SpecColor");
         public static readonly int specGlossMapPropId = Shader.PropertyToID("_SpecGlossMap");
+        public static readonly int srcBlendPropId = Shader.PropertyToID("_SrcBlend");
+        public static readonly int zWritePropId = Shader.PropertyToID("_ZWrite");
 
         const string ERROR_MULTI_UVS = "Multiple UV sets are not supported!";
         
