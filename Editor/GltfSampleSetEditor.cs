@@ -22,9 +22,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
 using GLTFast;
+using GLTFast.Materials;
 using GLTFast.Schema;
 using GLTFast.Tests;
 using UnityEditor.SceneManagement;
+using UnityEngine.Rendering;
+#if USING_HDRP
+using UnityEngine.Rendering.HighDefinition;
+#endif
 #endif
 
 namespace GLTFast.Editor {
@@ -82,9 +87,12 @@ namespace GLTFast.Editor {
             var allScenes = new List<EditorBuildSettingsScene>();
             Texture2D dummyReference = null;
 
+            var renderPipeline = DetectRenderPipeline();
+            var prefix = renderPipeline == RenderPipeline.HighDefinition ? "HDRP" : "";
+
             foreach (var item in sampleSet.GetItems())
             {
-                var testScene = EditorSceneManager.OpenScene("Assets/Scenes/TestScene.unity");
+                var testScene = EditorSceneManager.OpenScene($"Assets/Scenes/TestScene{prefix}.unity");
                 
                 var settingsGameObject = new GameObject("GraphicsTestSettings");
                 var graphicsTestSettings = settingsGameObject.AddComponent<UniversalGraphicsTestSettings>();
@@ -100,9 +108,9 @@ namespace GLTFast.Editor {
                 }
                 gltfAsset.loadOnStartup = false;
                 gltfAsset.createBoxCollider = false;
-                
-                var sceneDirectory = CertifyDirectory(item.directoryParts, string.Format("Assets/Scenes/{0}", sampleSet.name));
-                var scenePath = Path.Combine(sceneDirectory, item.name+".unity");
+
+                var sceneDirectory = CertifyDirectory(item.directoryParts, $"Assets/Scenes/{sampleSet.name}");
+                var scenePath = Path.Combine(sceneDirectory, $"{prefix}{item.name}.unity");
 
                 EditorSceneManager.SaveScene(testScene,scenePath);
                 allScenes.Add(new EditorBuildSettingsScene(scenePath,true));
@@ -134,6 +142,33 @@ namespace GLTFast.Editor {
             File.WriteAllText(jsonPathAbsolute,json);
         }
 
+#if GLTFAST_RENDER_TEST
+        enum RenderPipeline {
+            Unknown,
+            BuiltIn,
+            Universal,
+            HighDefinition,
+        }
+    
+        static RenderPipeline DetectRenderPipeline() {
+            // ReSharper disable once Unity.PerformanceCriticalCodeNullComparison
+            if (GraphicsSettings.renderPipelineAsset != null) {
+#if USING_URP
+                if (GraphicsSettings.renderPipelineAsset is UniversalRenderPipelineAsset urpAsset) {
+                    return defaultMaterialGenerator;
+                }
+#endif
+#if USING_HDRP
+            if (GraphicsSettings.renderPipelineAsset is HDRenderPipelineAsset) {
+                return RenderPipeline.HighDefinition;
+            }
+#endif
+                return RenderPipeline.Unknown;
+            }
+            return RenderPipeline.BuiltIn;
+        }
+#endif
+        
         private static string CertifyDirectory(string[] directoryParts, string directoyPath)
         {
             foreach (var dirPart in directoryParts)
