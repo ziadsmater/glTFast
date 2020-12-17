@@ -303,12 +303,16 @@ namespace GLTFast.Materials {
             }
             material.SetVector(baseColorPropId, baseColorLinear);
 
-            if(gltfMaterial.emissive != Color.black) {
-                material.SetColor(emissionColorPropId, gltfMaterial.emissive);
-                material.EnableKeyword(KW_EMISSION);
+            if (gltfMaterial.emissive != Color.black) {
+                ApplyEmission(material,gltfMaterial.emissive);
             }
 
             return material;
+        }
+
+        protected virtual void ApplyEmission(Material material,Color emissive) {
+            material.SetColor(emissionColorPropId, emissive);
+            material.EnableKeyword(KW_EMISSION);
         }
 
         protected virtual void ApplyAlphaCutoff(Material material, bool enable, float alphaCutoff) {
