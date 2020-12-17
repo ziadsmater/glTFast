@@ -164,6 +164,13 @@ namespace GLTFast
                 }
             }
 
+            if (posInput.count > GLTFast.ImmediateBatchThreshold) {
+                // When the buffer is big, it may make sense to start
+                // working on the positions (in a thread) right away
+                // while scheduling the rest of the attributes.
+                JobHandle.ScheduleBatchedJobs();
+            }
+            
             if (texCoords!=null) {
                 texCoords.ScheduleVertexUVJobs(uvInputs, new NativeSlice<JobHandle>(handles,handleIndex,uvInputs.Length) );
                 handleIndex++;

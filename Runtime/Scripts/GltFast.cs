@@ -44,6 +44,7 @@ namespace GLTFast {
     public class GLTFast {
 
         public const int DefaultBatchCount = 50000;
+        public const int ImmediateBatchThreshold = DefaultBatchCount * 4;
         const uint GLB_MAGIC = 0x46546c67;
 
         public const string ErrorUnsupportedType = "Unsupported {0} type {1}";
@@ -1304,6 +1305,41 @@ namespace GLTFast {
             }
 #endif
             
+            /// Retrieve indices data jobified
+            accessorData = new AccessorDataBase[gltf.accessors.Length];
+
+            for(int i=0; i<accessorData.Length; i++) {
+                var acc = gltf.accessors[i];
+                if(acc.bufferView<0) {
+                    // Not actual accessor to data
+                    // Common for draco meshes
+                    // the accessor only holds meta information
+                    continue;
+                }
+                if (acc.typeEnum==GLTFAccessorAttributeType.SCALAR
+                    &&( accessorUsage[i]==AccessorUsage.IndexFlipped ||
+                        accessorUsage[i]==AccessorUsage.Index )
+                )
+                {
+                    JobHandle? jh;
+                    var ads = new  AccessorData<int>();
+                    GetIndicesJob(gltf,i,out ads.data, out jh, out ads.gcHandle, accessorUsage[i]==AccessorUsage.IndexFlipped);
+                    tmpList.Add(jh.Value);
+                    accessorData[i] = ads;
+                }
+                else if (acc.typeEnum==GLTFAccessorAttributeType.MAT4
+                    && accessorUsage[i]==AccessorUsage.InverseBindMatrix
+                )
+                {
+                    JobHandle? jh;
+                    // TODO: Maybe use AccessorData, since Mesh.bindposes only accepts C# arrays.
+                    var ads = new  AccessorNativeData<Matrix4x4>();
+                    GetMatricesJob(gltf,i,out ads.data, out jh);
+                    tmpList.Add(jh.Value);
+                    accessorData[i] = ads;
+                }
+            }
+            
             foreach(var mainBufferType in mainBufferTypes) {
 
                 var att = mainBufferType.Key;
@@ -1380,41 +1416,6 @@ namespace GLTFast {
                     tmpList.Add(jh.Value);
                 } else {
                     loadingError = true;
-                }
-            }
-
-            /// Retrieve indices data jobified
-            accessorData = new AccessorDataBase[gltf.accessors.Length];
-
-            for(int i=0; i<accessorData.Length; i++) {
-                var acc = gltf.accessors[i];
-                if(acc.bufferView<0) {
-                    // Not actual accessor to data
-                    // Common for draco meshes
-                    // the accessor only holds meta information
-                    continue;
-                }
-                if (acc.typeEnum==GLTFAccessorAttributeType.SCALAR
-                    &&( accessorUsage[i]==AccessorUsage.IndexFlipped ||
-                        accessorUsage[i]==AccessorUsage.Index )
-                    )
-                {
-                    JobHandle? jh;
-                    var ads = new  AccessorData<int>();
-                    GetIndicesJob(gltf,i,out ads.data, out jh, out ads.gcHandle, accessorUsage[i]==AccessorUsage.IndexFlipped);
-                    tmpList.Add(jh.Value);
-                    accessorData[i] = ads;
-                }
-                else if (acc.typeEnum==GLTFAccessorAttributeType.MAT4
-                    && accessorUsage[i]==AccessorUsage.InverseBindMatrix
-                    )
-                {
-                    JobHandle? jh;
-                    // TODO: Maybe use AccessorData, since Mesh.bindposes only accepts C# arrays.
-                    var ads = new  AccessorNativeData<Matrix4x4>();
-                    GetMatricesJob(gltf,i,out ads.data, out jh);
-                    tmpList.Add(jh.Value);
-                    accessorData[i] = ads;
                 }
             }
 
@@ -1737,6 +1738,12 @@ namespace GLTFast {
                 Debug.LogErrorFormat( "Invalid index format {0}", accessor.componentType );
                 jobHandle = null;
                 break;
+            }
+
+            if (jobHandle.HasValue) {
+                if (indices.Length > ImmediateBatchThreshold) {
+                    JobHandle.ScheduleBatchedJobs();
+                }
             }
             Profiler.EndSample();
             Profiler.EndSample();
