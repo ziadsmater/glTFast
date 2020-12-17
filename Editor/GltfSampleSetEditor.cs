@@ -27,6 +27,9 @@ using GLTFast.Schema;
 using GLTFast.Tests;
 using UnityEditor.SceneManagement;
 using UnityEngine.Rendering;
+#if USING_URP
+using UnityEngine.Rendering.Universal;
+#endif
 #if USING_HDRP
 using UnityEngine.Rendering.HighDefinition;
 #endif
@@ -155,7 +158,7 @@ namespace GLTFast.Editor {
             if (GraphicsSettings.renderPipelineAsset != null) {
 #if USING_URP
                 if (GraphicsSettings.renderPipelineAsset is UniversalRenderPipelineAsset urpAsset) {
-                    return defaultMaterialGenerator;
+                    return RenderPipeline.Universal;
                 }
 #endif
 #if USING_HDRP
