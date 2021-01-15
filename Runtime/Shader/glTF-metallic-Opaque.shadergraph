@@ -1533,7 +1533,7 @@
     "m_ShaderOutputName": "A",
     "m_StageCapability": 3,
     "m_Value": {
-        "e00": 0.0,
+        "e00": 1.0,
         "e01": 0.0,
         "e02": 0.0,
         "e03": 0.0,
@@ -2533,7 +2533,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "RefractionIndex",
     "m_StageCapability": 2,
-    "m_Value": 1.0,
+    "m_Value": 1.5,
     "m_DefaultValue": 1.0,
     "m_Labels": []
 }
@@ -2987,8 +2987,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 1104.5,
-            "y": 587.0,
+            "x": 906.0,
+            "y": 528.0,
             "width": 125.00000762939453,
             "height": 118.0
         }
@@ -3745,10 +3745,10 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
     "m_ObjectId": "ec0667961e4fc2829e3a16b3416bbc54",
     "m_Id": 1,
-    "m_DisplayName": "Out_Vector3",
+    "m_DisplayName": "Albedo",
     "m_SlotType": 1,
     "m_Hidden": false,
-    "m_ShaderOutputName": "OutVector3",
+    "m_ShaderOutputName": "Albedo",
     "m_StageCapability": 2,
     "m_Value": {
         "x": 0.0,
