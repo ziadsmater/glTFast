@@ -358,7 +358,7 @@ namespace GLTFast.Materials {
         /// <param name="transmission"></param>
         /// <param name="material"></param>
         /// <param name="renderQueue"></param>
-        /// <returns>True, when premultiplied makeshift solution was applied</returns>
+        /// <returns>Null when no transmission was applied. True, when premultiplied makeshift solution was applied</returns>
         protected virtual bool? ApplyTransmission(
             ref Color baseColorLinear,
             ref Texture[] textures,

@@ -34,11 +34,13 @@ namespace GLTFast.Materials {
         const string KW_ENABLE_FOG_ON_TRANSPARENT = "_ENABLE_FOG_ON_TRANSPARENT";
         const string KW_NORMALMAP_TANGENT_SPACE = "_NORMALMAP_TANGENT_SPACE";
         const string KW_REFRACTION_THIN = "_REFRACTION_THIN";
+        const string KW_SURFACE_TYPE = "_SURFACE_TYPE_";
         const string KW_SURFACE_TYPE_TRANSPARENT = "_SURFACE_TYPE_TRANSPARENT";
         
         static readonly int alphaCutoffEnablePropId = Shader.PropertyToID("_AlphaCutoffEnable");
         static readonly int alphaDstBlendPropId = Shader.PropertyToID("_AlphaDstBlend");
         static readonly int alphaSrcBlendPropId = Shader.PropertyToID("_AlphaSrcBlend");
+        static readonly int blendModePropId = Shader.PropertyToID("_BlendMode");
         static readonly int cullModePropId = Shader.PropertyToID("_CullMode");
         static readonly int cullModeForwardPropId = Shader.PropertyToID("_CullModeForward");
         static readonly int doubleSidedEnablePropId = Shader.PropertyToID("_DoubleSidedEnable");
@@ -58,8 +60,10 @@ namespace GLTFast.Materials {
             ref Dictionary<int, Texture2D>[] imageVariants
         ) {
             var material = base.GenerateMaterial(gltfMaterial, ref textures, ref schemaImages, ref imageVariants);
+            
             material.EnableKeyword(KW_NORMALMAP_TANGENT_SPACE);
             material.EnableKeyword(KW_DISABLE_SSR_TRANSPARENT);
+            
             if (gltfMaterial.doubleSided) {
                 material.EnableKeyword(KW_DOUBLESIDED_ON);
                 material.SetInt(doubleSidedEnablePropId,1);
@@ -114,7 +118,12 @@ namespace GLTFast.Materials {
         ) {
             if (transmission.transmissionFactor > 0f) {
                 // material.EnableKeyword("TRANSMISSION");
+                // _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT _NORMALMAP_TANGENT_SPACE _REFRACTION_THIN _SURFACE_TYPE_ _SURFACE_TYPE_TRANSPARENT
                 material.EnableKeyword(KW_REFRACTION_THIN);
+                material.EnableKeyword(KW_SURFACE_TYPE);
+                material.EnableKeyword(KW_SURFACE_TYPE_TRANSPARENT);
+                material.SetFloat(blendModePropId, 0);
+                material.SetFloat("_EnableBlendModePreserveSpecularLighting", 1);
                 material.SetFloat(transmissionFactorPropId, transmission.transmissionFactor);
                 material.SetFloat(transmissionFactorPropId, transmission.transmissionFactor);
                 renderQueue = RenderQueue.Transparent;
@@ -145,9 +154,9 @@ namespace GLTFast.Materials {
             material.EnableKeyword(KW_ENABLE_FOG_ON_TRANSPARENT);
             material.EnableKeyword(KW_SURFACE_TYPE_TRANSPARENT);
             
-            material.SetInt(srcBlendPropId, (int)BlendMode.One);//5
+            material.SetInt(srcBlendPropId, (int)BlendMode.One);//1
             material.SetInt(dstBlendPropId, (int)BlendMode.OneMinusSrcAlpha);//10
-            material.SetInt(alphaSrcBlendPropId, (int)BlendMode.One);//5
+            material.SetInt(alphaSrcBlendPropId, (int)BlendMode.One);//1
             material.SetInt(alphaDstBlendPropId, (int)BlendMode.OneMinusSrcAlpha);//10
             material.SetInt(zWritePropId, 0);
             material.SetInt(enableBlendModePreserveSpecularLightingPropId, 0);
