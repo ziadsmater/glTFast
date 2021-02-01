@@ -446,6 +446,20 @@
             },
             "m_InputSlot": {
                 "m_Node": {
+                    "m_Id": "29e3017c13268285bdae40a33316bc24"
+                },
+                "m_SlotId": -1769355065
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "c85a039b5f4cd68c98fbb1f2ca2d7822"
+                },
+                "m_SlotId": 4
+            },
+            "m_InputSlot": {
+                "m_Node": {
                     "m_Id": "3eb9d1d769d24aff9a4aa9282082344d"
                 },
                 "m_SlotId": 0
@@ -1097,6 +1111,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "1d9e14d891be4086afc5d21a2e5ef70b",
+    "m_Id": -1769355065,
+    "m_DisplayName": "metallic",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Vector1_47d5ddd44e2947af8289d6eedaebafff",
+    "m_StageCapability": 2,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty",
     "m_ObjectId": "1ebf222ab7a12d899a64a7f05c48aa05",
     "m_Guid": {
@@ -1353,9 +1382,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 679.5,
-            "y": -94.0,
-            "width": 326.0,
+            "x": 774.9999389648438,
+            "y": -133.00001525878907,
+            "width": 262.9999694824219,
             "height": 166.0
         }
     },
@@ -1373,6 +1402,9 @@
             "m_Id": "f4a6ce918b2ecc8c86419e78b0e5e03a"
         },
         {
+            "m_Id": "1d9e14d891be4086afc5d21a2e5ef70b"
+        },
+        {
             "m_Id": "ec0667961e4fc2829e3a16b3416bbc54"
         }
     ],
@@ -1387,13 +1419,15 @@
         "22a7d007-eba4-4fe6-b3d7-636c03cc760e",
         "6975d6d2-7b40-4103-aceb-154520b5a9bf",
         "8c061bba-ea8e-4dfc-9ff3-60bada05801c",
-        "c7571956-4ec9-4927-ab49-20c14168211e"
+        "c7571956-4ec9-4927-ab49-20c14168211e",
+        "a36081fd-74e9-4999-ac7b-41e8a99586a3"
     ],
     "m_PropertyIds": [
         -1442603025,
         120952686,
         109598298,
-        -1449242513
+        -1449242513,
+        -1769355065
     ]
 }
 
