@@ -128,7 +128,7 @@ Will not be supported:
 
 <sup>2</sup>: The texture transform of baseColorTexture (or diffuseTexture for Specular-Glossiness) is re-used for all other textures. If you need different texture transforms for different texture types, [create an issue][newIssue].
 
-<sup>3</sup>: There are two approximation implementations for transmission in Universal render pipeline. If the Opaque Texture is enabled (in the Universal RP Asset settings), it is sampled to provide proper transmissive filtering. The downside of this approach is transparent objects are not rendered on top of each other. If the opaque texture is not available, the common approximation (see <sup>4</sup> below) is used.
+<sup>3</sup>: There are two approximation implementations for transmission in Universal render pipeline. If the Opaque Texture is enabled (in the Universal RP Asset settings), it is sampled to provide transmissive filtering. Deficiencies: Rough refractions are clear (not blurred); transparent objects are not rendered on top of each other. If the opaque texture is not available, the common approximation (see <sup>4</sup> below) is used.
 
 <sup>4</sup>: Transmission in Built-In and HD render pipeline does not support transmission textures and is only 100% correct in certain cases like clear glass (100% transmission, white base color). Otherwise it's an approximation.
 
