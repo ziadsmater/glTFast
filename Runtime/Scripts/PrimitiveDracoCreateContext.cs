@@ -47,25 +47,6 @@ namespace GLTFast {
                 return null;
             }
 
-            Profiler.BeginSample("DracoMeshLoader.CreateMesh");
-            bool hasTexcoords;
-            bool hasNormals;
-            var mesh = DracoMeshLoader.CreateMesh(dracoMesh, out hasNormals, out hasTexcoords);
-            Profiler.EndSample();
-
-            if(needsNormals && !hasNormals) {
-                Profiler.BeginSample("Draco.RecalculateNormals");
-                // TODO: Make optional. Only calculate if actually needed
-                mesh.RecalculateNormals();
-                Profiler.EndSample();
-            }
-            if(needsTangents && hasTexcoords) {
-                Profiler.BeginSample("Draco.RecalculateTangents");
-                // TODO: Make optional. Only calculate if actually needed
-                mesh.RecalculateTangents();
-                Profiler.EndSample();
-            }
-
 #if GLTFAST_KEEP_MESH_DATA
             Profiler.BeginSample("UploadMeshData");
             mesh.UploadMeshData(false);
