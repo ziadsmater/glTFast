@@ -1350,7 +1350,7 @@ namespace GLTFast {
                 var node = gltf.nodes[nodeIndex];
 
                 var goName = 
-#if ANIMATION
+#if UNITY_ANIMATION
                     nodeNames==null ? node.name : nodeNames[nodeIndex];
 #else
                     node.name;
