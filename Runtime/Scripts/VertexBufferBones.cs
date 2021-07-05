@@ -106,6 +106,20 @@ namespace GLTFast {
 
         public override void ApplyOnMesh(UnityEngine.Mesh msh, int stream, MeshUpdateFlags flags = PrimitiveCreateContextBase.defaultMeshUpdateFlags) {
             Profiler.BeginSample("ApplyBones");
+            var sorted = true;
+            foreach (var vbone in vData) {
+                if (!vbone.isSorted) {
+                    sorted = false;
+                    vbone.Sort();
+#if DEBUG
+                    if (!vbone.isSorted) {
+                        Debug.LogError("Sort doesn't work");
+                    }
+#endif
+                }
+            } if (!sorted) {
+                Debug.LogWarning("Bones are not sorted by weight!");
+            }
             msh.SetVertexBufferData(vData,0,0,vData.Length,stream,flags);
             Profiler.EndSample();
         }

@@ -69,15 +69,29 @@ namespace GLTFast.Vertex
 
 
     [StructLayout(LayoutKind.Sequential)]
-    struct VBones {
-        public float weight0;
-        public float weight1;
-        public float weight2;
-        public float weight3;
+    unsafe struct VBones {
+        public fixed float weights[4];
+        public fixed uint joints[4];
 
-        public uint joint0;
-        public uint joint1;
-        public uint joint2;
-        public uint joint3;
+        public bool isSorted =>
+            weights[0] >= weights[1]
+            && weights[1] >= weights[2]
+            && weights[2] >= weights[3];
+
+        public void Sort() {
+            for (int i = 0; i < 3; i++) {
+                for (int j = i+1; j < 4; j++) {
+                    if (weights[i] < weights[j]) {
+                        var tmpWeight = weights[j];
+                        weights[j] = weights[i];
+                        weights[i] = tmpWeight;
+
+                        var tmpJoint = joints[j];
+                        joints[j] = joints[i];
+                        joints[i] = tmpJoint;
+                    }
+                }
+            }
+        }
     }
 }
