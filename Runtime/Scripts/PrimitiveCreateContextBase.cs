@@ -44,7 +44,8 @@ namespace GLTFast
 
         public void SetMaterial(int subMesh, int materialIndex)
         {
-            m_Materials[subMesh] = materialIndex;
+            if(subMesh < materialIndex)
+                m_Materials[subMesh] = materialIndex;
         }
 
         public MorphTargetsContext morphTargetsContext;
