@@ -44,7 +44,7 @@ namespace GLTFast
 
         public void SetMaterial(int subMesh, int materialIndex)
         {
-            if(subMesh < materialIndex)
+            if(m_Materials.Count < subMesh)
                 m_Materials[subMesh] = materialIndex;
         }
 
