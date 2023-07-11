@@ -393,9 +393,9 @@ namespace GLTFast
         {
             var firstBytes = new byte[4];
 
-#if UNITY_2021_3_OR_NEWER && NET_STANDARD_2_1
-            await using
-#endif
+// #if UNITY_2021_3_OR_NEWER && NET_STANDARD_2_1
+//             await using
+// #endif
             var fs = new FileStream(localPath, FileMode.Open, FileAccess.Read);
             var bytesRead = await fs.ReadAsync(firstBytes, 0, firstBytes.Length, cancellationToken);
 
